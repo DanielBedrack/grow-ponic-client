@@ -43,8 +43,8 @@ export const loginUser = createAsyncThunk('user/login', async (userData) => {
 
 const userInitialState = {
   isLoggedIn: false,
-  userData: localStorage.getItem('userData')
-    ? JSON.parse(localStorage.getItem('userData'))
+  userInfo: localStorage.getItem('userInfo')
+    ? JSON.parse(localStorage.getItem('userInfo'))
     : null,
   isLoading: false,
   error: null,
@@ -55,11 +55,15 @@ const authSlice = createSlice({
   initialState: userInitialState,
   reducers: {
     userSignin(state, action) {
-      state.userData = action.payload;
+      state.userInfo = action.payload;
+      state.isLoggedIn = true;
+    },
+    userRegister(state, action) {
+      state.userInfo = action.payload;
       state.isLoggedIn = true;
     },
     userLoggedOut(state) {
-      state.userData = null;
+      state.userInfo = null;
       state.isLoggedIn = false;
     },
   },
@@ -73,8 +77,8 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.userData = action.payload;
         state.isLoggedIn = true;
-        // Store user data in local storage
-        localStorage.setItem('userData', JSON.stringify(action.payload));
+
+        localStorage.setItem('userInfo', JSON.stringify(action.payload));
       })
       .addCase(fetchUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -89,7 +93,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.userData = action.payload;
+        state.userInfo = action.payload;
         state.isLoggedIn = true;
         // Store user data in local storage
         localStorage.setItem('userData', JSON.stringify(action.payload));
@@ -97,6 +101,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { userLoggedOut, userSignin } = authSlice.actions;
+export const { userLoggedOut, userSignin, userRegister } = authSlice.actions;
 
 export default authSlice.reducer;

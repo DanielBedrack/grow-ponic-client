@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import {  useSelector } from 'react-redux';
-import axios from 'axios'; // Import Axios
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios'; 
+import { userRegister } from '../../reducers-redux/userReducer';
 
 const RegistrationForm = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
-  //const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const { userData } = useSelector((state) => state.user);
   const redirectInUrl = new URLSearchParams(search).get('redirect');
   const redirect = redirectInUrl ? redirectInUrl : '/';
@@ -23,34 +24,33 @@ const RegistrationForm = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    console.log('trying to post a user: ' + formData.firstName);
-    // Send the registration data to the server-side URL
-    const response = await axios.post('/tracking/users/register', formData);
+    try {
+      console.log('trying to post a user: ' + formData.firstName);
+      // Send the registration data to the server-side URL
+      const response = await axios.post('/tracking/users/register', formData);
 
-    // Handle the response from the server
-    if (response.status === 200) {
-      const responseData = response.data;
+      // Handle the response from the server
+      if (response.status === 200) {
+        const responseData = response.data;
+        console.log(responseData);
+        // Check if the response contains a 'token' property
 
-      // Check if the response contains a 'token' property
-      
         // Registration successful, you can perform any necessary actions
         console.log('Registration successful');
+        dispatch(userRegister(responseData));
         localStorage.setItem('userInfo', JSON.stringify(responseData));
         navigate(redirect || '/');
-
-    } else {
-      // Handle other status codes if needed
-      console.error('Registration failed:', response.statusText);
+      } else {
+        // Handle other status codes if needed
+        console.error('Registration failed:', response.statusText);
+      }
+    } catch (error) {
+      // Handle any network or server errors
+      console.error('Error during registration', error);
     }
-  } catch (error) {
-    // Handle any network or server errors
-    console.error('Error during registration', error);
-  }
-};
-
+  };
 
   useEffect(() => {
     if (userData) {

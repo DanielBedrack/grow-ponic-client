@@ -33,7 +33,7 @@ function SystemRegistrationForm() {
     try {
       // Send the registration data to the server-side URL
       const response = await axios.post(
-        '/api/systems/create-system', // Updated route to match the backend
+        'tracking/systems/create-system', // Updated route to match the backend
         systemData,
         {
           headers: { Authorization: `Bearer ${userInfo.token}` },
