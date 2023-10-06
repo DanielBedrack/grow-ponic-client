@@ -13,8 +13,7 @@ const RegistrationForm = () => {
   const redirectInUrl = new URLSearchParams(search).get('redirect');
   const redirect = redirectInUrl ? redirectInUrl : '/';
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    name: '',
     email: '',
     password: '',
   });
@@ -27,7 +26,7 @@ const RegistrationForm = () => {
     e.preventDefault();
 
     try {
-      console.log('trying to post a user: ' + formData.firstName);
+      console.log('trying to post a user: ' + formData.name);
       // Send the registration data to the server-side URL
       const response = await axios.post('/tracking/users/register', formData);
 
@@ -41,7 +40,7 @@ const RegistrationForm = () => {
         console.log('Registration successful');
         dispatch(userRegister(responseData));
         localStorage.setItem('userInfo', JSON.stringify(responseData));
-        navigate(redirect || '/');
+        navigate('/');
       } else {
         // Handle other status codes if needed
         console.error('Registration failed:', response.statusText);
@@ -60,23 +59,12 @@ const RegistrationForm = () => {
 
   return (
     <Form onSubmit={handleSubmit}>
-      <Form.Group controlId="firstName">
-        <Form.Label>First Name</Form.Label>
+      <Form.Group controlId="name">
+        <Form.Label>Name</Form.Label>
         <Form.Control
           type="text"
-          name="firstName"
-          value={formData.firstName}
-          onChange={handleChange}
-          required
-        />
-      </Form.Group>
-
-      <Form.Group controlId="lastName">
-        <Form.Label>Last Name</Form.Label>
-        <Form.Control
-          type="text"
-          name="lastName"
-          value={formData.lastName}
+          name="name"
+          value={formData.name}
           onChange={handleChange}
           required
         />

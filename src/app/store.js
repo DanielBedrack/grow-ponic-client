@@ -3,13 +3,17 @@ import dataReducer from '../reducers-redux/dataReducer'; // Adjust the import pa
 import trackingReducer from '../reducers-redux/tracking/trackingReducer';
 import userReducer from '../reducers-redux/userReducer';
 import systemReducer from '../reducers-redux/tracking/systemReducer';
+import cycleReducer from '../reducers-redux/tracking/cycleReducer';
+import plantReducer from '../reducers-redux/tracking/plantReducer';
 
 const store = configureStore({
   reducer: {
     dataService: dataReducer,
     trackingService: trackingReducer,
     user: userReducer,
-    system: systemReducer
+    system: systemReducer,
+    cycle: cycleReducer,
+    plants:plantReducer
   },
 });
 

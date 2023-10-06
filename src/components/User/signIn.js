@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
 import { Link, useNavigate } from 'react-router-dom';
-import Container from 'react-bootstrap/esm/Container';
+import Container from 'react-bootstrap/Container'; // Removed "/esm" from the import path
 import { Button, Form } from 'react-bootstrap';
-import { loginUser } from '../services/userService'; // Correct the import path
+import { loginUser } from '../services/userService';
 import { FireBaseConfig } from '../../firebase/config';
 import {
   FacebookLoginButton,
@@ -17,31 +17,25 @@ export default function SignIn() {
   const [userSuccess, setUserSuccess] = useState(false);
 
   const navigate = useNavigate();
-  // const changeInputs = (e) => {
-  //   setInputs({ ...inputs, [e.target.name]: e.target.value });
-  // };
 
   const submitUserLogin = async () => {
     console.log(inputs);
-    return await loginUser(inputs)
-      .then((res) => {
-        if (res.token) {
-          Cookies.set('authorization', res.token);
-          Cookies.set('user', res.user.email);
-          setUserError(false);
-          setUserSuccess(true);
-          setTimeout(() => {
-            navigate('/');
-          }, 2000);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err) {
-          setUserSuccess(false);
-          return setUserError(true);
-        }
-      });
+    try {
+      const res = await loginUser(inputs);
+      if (res.token) {
+        Cookies.set('authorization', res.token);
+        Cookies.set('user', res.user.email);
+        setUserError(false);
+        setUserSuccess(true);
+        setTimeout(() => {
+          navigate('/');
+        }, 2000);
+      }
+    } catch (err) {
+      console.error(err);
+      setUserSuccess(false);
+      setUserError(true);
+    }
   };
   FireBaseConfig();
 
@@ -51,23 +45,24 @@ export default function SignIn() {
     console.log(user);
 
     try {
-      console.log(user);
       await user.google();
 
       Cookies.set('user', user.currentUser.displayName, { expires: 7 });
       navigate('/');
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
     }
   };
+
   const signInWithFacebook = async (event) => {
     event.preventDefault();
     try {
       await user.facebook();
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
     }
   };
+
   return (
     <Form onSubmit={submitUserLogin}>
       <div className="d-flex">
@@ -104,11 +99,10 @@ export default function SignIn() {
         <Button type="submit">Sign In</Button>
       </div>
       <div className="mb-3">
-        New customer?{' '}
-        {/* <Link to={`/signup?redirect=${redirect}`}>Create your account</Link> */}
+        New customer? <Link to="/register">Create your account</Link>
       </div>
       <div className="mb-3">
-        Forget Password? <Link to={`/forget-password`}>Reset Password</Link>
+        Forgot Password? <Link to="/forget-password">Reset Password</Link>
       </div>
     </Form>
   );

@@ -4,9 +4,11 @@ import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { addCycle } from '../../reducers-redux/tracking/systemReducer';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-function CycleRegistration() {
+const CycleRegistration = ({ systemId }) => {
   const dispatch = useDispatch();
+  //const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     isActive: true,
@@ -16,7 +18,7 @@ function CycleRegistration() {
     waterTemp: '',
     outsideTemp: '',
     plantingHallsInUse: '',
-    // Add other cycle data properties here
+    systemId: systemId,
   });
 
   const handleChange = (e) => {
@@ -28,33 +30,41 @@ function CycleRegistration() {
   };
 
   const handleSubmit = async () => {
-    // Create a new cycle object using the form data
-    const newCycle = {
-      isActive: true,
-      pH: formData.pH,
-      EC: formData.EC,
-      PPM: formData.PPM,
-      waterTemp: formData.waterTemp,
-      outsideTemp: formData.outsideTemp,
-      plantingHallsInUse: formData.plantingHallsInUse,
-      // Add other cycle data properties here
-    };
+    try {
+      // Send the cycle data to the server to create a new cycle
+      const response = await axios.post(
+        `tracking/cycles/create-cycle/${systemId}`, // Replace with the actual backend route
+        formData
+      );
+        console.log(`Response: ${response}`)
+      if (response.status === 200) {
+        // Cycle creation successful, you can perform any necessary actions
+        console.log('Cycle creation successful');
+        const cycleId = response.data.cycle._id;
 
-    // Dispatch the addCycle action to add the new cycle to your Redux store
-    // You will need to provide the systemId along with the cycle data
-    dispatch(addCycle({ cycle: newCycle }));
+        // Dispatch the addCycle action to add the new cycle to your Redux store
+        dispatch(addCycle({ cycleId, cycle: formData }));
 
-    // Reset the form after submission
-    // setFormData({
-    //   isActive: true,
-    //   pH: '',
-    //   EC: '',
-    //   PPM: '',
-    //   waterTemp: '',
-    //   outsideTemp: '',
-    //   plantingHallsInUse: '',
-    //   // Reset other form fields here
-    // });
+        // // Reset the form after submission
+        // setFormData({
+        //   isActive: false,
+        //   pH: '',
+        //   EC: '',
+        //   PPM: '',
+        //   waterTemp: '',
+        //   outsideTemp: '',
+        //   plantingHallsInUse: '',
+        //   systemId: '',
+        // });
+        //navigate('/systems')
+      } else {
+        // Cycle creation failed, handle errors if needed
+        console.error('Cycle creation failed');
+      }
+    } catch (error) {
+      // Handle any network or server errors
+      console.error('Error during cycle creation', error);
+    }
   };
 
   return (
@@ -129,8 +139,6 @@ function CycleRegistration() {
               />
             </Form.Group>
 
-            {/* Add other cycle data form fields as needed */}
-
             <Button variant="primary" type="submit">
               Add Cycle
             </Button>
@@ -142,3 +150,4 @@ function CycleRegistration() {
 }
 
 export default CycleRegistration;
+

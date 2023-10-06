@@ -1,22 +1,27 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+//import { addSystem } from '../../reducers-redux/tracking/systemReducer';
+import CycleRegistration from './cycleRegistration';
 
 function SystemRegistrationForm() {
   const navigate = useNavigate();
-  const { search } = useLocation();
+  //const dispatch = useDispatch();
 
   const { userInfo } = useSelector((state) => state.user);
+  const [addCycle, setAddCycle] = useState(false);
+  const [systemId, setSystemId] = useState(null);
+  console.log(`Continue to add Cycle: ${addCycle}, SystemID: ${systemId}`)
 
-  const redirectInUrl = new URLSearchParams(search).get('redirect');
   const [systemData, setSystemData] = useState({
     name: '',
     location: '',
     plantingHallsOverall: '',
     sunLight: '',
     waterTank: '',
+    images: [],
   });
 
   const handleChange = (e) => {
@@ -41,10 +46,12 @@ function SystemRegistrationForm() {
       );
 
       if (response.status === 200) {
-        // Registration successful, you can perform any necessary actions
-        console.log('Registration successful');
+        //dispatch(addSystem(systemData))
         localStorage.setItem('systemData', JSON.stringify(systemData));
-        navigate(`/create-cycle`);
+        // Set the systemId state to the system's ID
+        setSystemId(response.data.savedSystem._id);
+        setAddCycle(true)
+        //navigate(`/create-cycle`);
       } else {
         // Registration failed, handle errors if needed
         console.error('System Registration failed');
@@ -57,7 +64,7 @@ function SystemRegistrationForm() {
 
   const handleNotNow = () => {
     // Redirect the user to the SystemPage
-    navigate('/system-page');
+    navigate('/system');
   };
   return (
     <Container>
@@ -137,10 +144,11 @@ function SystemRegistrationForm() {
               Not Now
             </Button>
           </Form>
+          {addCycle && systemId && <CycleRegistration systemId={systemId} />}
         </Col>
       </Row>
     </Container>
   );
-}
+};
 
 export default SystemRegistrationForm;

@@ -1,18 +1,24 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchTracking } from '../../reducers-redux/tracking/trackingReducer';
+import { fetchSystems, fetchCycles } from '../../reducers-redux/tracking/trackingReducer';
+import AddButton from '../../components/shared/AddButton';
+import { useNavigate } from 'react-router-dom';
+import SystemList from '../../components/system/SystemList';
 
 const SystemPage = () => {
   const dispatch = useDispatch();
   const { data, isLoading, error } = useSelector(
-    (state) => state.trackingSerivce
+    (state) => state.trackingService
   );
-  console.log(data);
-  useEffect(() => {
-    dispatch(fetchTracking());
-  }, [dispatch]);
+  const { userInfo } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  console.log(data.systems)
 
-  console.log(data.systems.name);
+  useEffect(() => {
+
+    // Fetch data when the component mounts
+    dispatch(fetchSystems(userInfo.email));
+  }, [dispatch, userInfo]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -22,23 +28,40 @@ const SystemPage = () => {
     return <div>Error: {error}</div>;
   }
 
+  const handleAddButtonClick = () => {
+    navigate('/create-system');
+  };
+  const handleSystemClick = () => {
+
+  }
+
   return (
     <div>
-      <h2>System Information</h2>
-      <p>Name: {data.systems.name}</p>
-      <p>Location: {data.systems.location}</p>
-      <p>Planting Halls Overall: {data.systems.plantingHallsOverall}</p>
-      <p>Sunlight: {data.systems.sunLight} hours</p>
-      <p>Water Tank: {data.systems.waterTank} liters</p>
+      <AddButton onClick={handleAddButtonClick} />
+      <SystemList systems={data.systems}  />
+      {/* <h2>System Information</h2>
+      {data.systems.map((system) => (
+        <div key={system._id}>
+          <p>Name: {system.name}</p>
+          <p>Location: {system.location}</p>
+          <p>Planting Halls Overall: {system.plantingHallsOverall}</p>
+          <p>Sunlight: {system.sunLight} hours</p>
+          <p>Water Tank: {system.waterTank} liters</p>
+        </div>
+      ))} */}
 
-      <h3>Cycle Information</h3>
-      <p>Is Active: {data.cycles.isActive ? 'Yes' : 'No'}</p>
-      <p>pH: {data.cycles.pH}</p>
-      <p>EC: {data.cycles.EC}</p>
-      <p>PPM: {data.cycles.PPM}</p>
-      <p>Water Temperature: {data.cycles.waterTemp} °C</p>
-      <p>Outside Temperature: {data.cycles.outsideTemp} °C</p>
-      <p>Planting Halls in Use: {data.cycles.plantingHallsInUse}</p>
+      {/* <h3>Cycle Information</h3>
+      {data.cycles.map((cycle) => (
+        <div key={cycle.systemID}>
+          <p>Is Active: {cycle.isActive ? 'Yes' : 'No'}</p>
+          <p>pH: {cycle.pH}</p>
+          <p>EC: {cycle.EC}</p>
+          <p>PPM: {cycle.PPM}</p>
+          <p>Water Temperature: {cycle.waterTemp} °C</p>
+          <p>Outside Temperature: {cycle.outsideTemp} °C</p>
+          <p>Planting Halls in Use: {cycle.plantingHallsInUse}</p>
+        </div>
+      ))}
 
       <h3>Plants</h3>
       <ul>
@@ -51,7 +74,7 @@ const SystemPage = () => {
       <p>pH: {data.averages.pH}</p>
       <p>EC: {data.averages.EC}</p>
       <p>PPM: {data.averages.PPM}</p>
-      <p>Temperature: {data.averages.temp} °C</p>
+      <p>Temperature: {data.averages.temp} °C</p> */}
     </div>
   );
 };

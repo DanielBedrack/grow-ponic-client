@@ -8,13 +8,19 @@ import SystemRegistrationForm from './components/registration-system/SystemRegis
 import UserSigninPage from './pages/user/UserSigninPage';
 import CycleRegistration from './components/registration-system/cycleRegistration';
 import UserRegisterPage from './pages/user/UserRegisterPage';
+import PlantData from './pages/Data/PlantDataPage';
+import Navbar from './components/shared/navbar';
+import DiseasesData from './pages/Data/DiseaseData';
+import SystemsData from './pages/Data/SystemsData';
+import CyclePage from './pages/system/CyclePage';
+import PlantPage from './pages/system/PlantPage';
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <div className="d-flex flex-column side-allpage">
-          {/* <Navbar /> */}
+          <Navbar />
           <main>
             <Container className="mt-3">
               <Routes>
@@ -22,11 +28,16 @@ function App() {
                 <Route path="/system" element={<SystemPage />} />
                 <Route path="/signin" element={<UserSigninPage />} />
                 <Route path="/register" element={<UserRegisterPage />} />
+                <Route path="/plants-data" element={<PlantData />} />
+                <Route path="/diseases-data" element={<DiseasesData />} />
+                <Route path="/systems-data" element={<SystemsData />} />
                 <Route
                   path="/create-system"
                   element={<SystemRegistrationForm />}
                 />
                 <Route path="/create-cycle" element={<CycleRegistration />} />
+                <Route path="/cycles/:systemId" element={<CyclePage />} />
+                <Route path="/plants" element={<PlantPage />} />
               </Routes>
             </Container>
           </main>

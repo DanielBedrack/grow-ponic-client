@@ -27,11 +27,11 @@ const UserSigninPage = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('/api/v1/users/signin', {
+      const { data } = await axios.post('/tracking/users/login', {
         email,
         password,
       });
-      dispatch(userSignin);
+      dispatch(userSignin(data));
       localStorage.setItem('userInfo', JSON.stringify(data));
 
       // If user was in different page, after signing in, automatacly redirect to page where he was, or to HomePage
@@ -76,7 +76,7 @@ const UserSigninPage = () => {
 
         <div className="mb-3">
           New customer?{' '}
-          <Link to={`/signup?redirect=${redirect}`}>Create your account</Link>
+          <Link to={`/register?redirect=${redirect}`}>Create your account</Link>
         </div>
 
         <div className="mb-3">
